@@ -1,8 +1,8 @@
 import pdb
 from operator import mul
-def readinput():
+def read_input(filename):
     boxes = []
-    with open("day2input.txt") as file:
+    with open(filename) as file:
         for line in file:
             boxes.append(createBox(line))
     return boxes
@@ -19,6 +19,10 @@ def execute_part_two(input):
         totalRibbon += box.get_ribbon()
     return totalRibbon
 
+def get_expected_results_map():
+    return { 'day2_test.txt' : (58+43, 14+34)}
+    
+
 def createBox(line):
     w, h, l = line.split("x")
     return Box(int(w), int(h), int(l))
@@ -29,7 +33,7 @@ class Box:
 
     def get_total_wrapping_paper(self):
         boxPaper = 0
-        smallestSide = 9999999
+        smallestSide = 999999999
         for dim in range(len(self.dimensionList)):
             dim1 = self.dimensionList[dim]
             dim2 = self.dimensionList[((dim+1)%len(self.dimensionList))] # wrap around when at the end
