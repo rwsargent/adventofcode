@@ -1,4 +1,6 @@
+3 -> y
 z AND 1 -> b
-2 AND 4 -> c
+y AND 4 -> c
 b OR c -> d
 d -> a
+3 -> z

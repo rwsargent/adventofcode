@@ -1,9 +1,8 @@
 import re, pdb
 def read_input(filename):
     wires = {}
-    gates = set()
-    #((\w+ )?(AND|OR|LSHIFT|RSHIFT|NOT)?)(?(1)\s)(\w+) -> ([a-z]+) -- the real one
-    regex = re.compile(r'((\w+ )?(AND|OR|LSHIFT|RSHIFT|NOT)?)(?(1)\s)(\w+) -> ([a-z]+)')
+    gates = list()
+    regex = re.compile(r'(([a-z0-9]+)?(?(2) )(AND|OR|LSHIFT|RSHIFT|NOT)?) ?(\w+) -> ([a-z]+)')
     with open(filename) as file:
         for line in file:
             match = regex.match(line)
@@ -11,29 +10,44 @@ def read_input(filename):
                 print(line)
                 raise Exception()
             gate = get_gate_of(match.group(3))
-            wire_one = get_wire(match.group(2), wires)
-            wire_two = get_wire(match.group(4), wires)
+            wire_one = get_wire(match.group(2), wires, gate)
+            wire_two = get_wire(match.group(4), wires, gate)
             wire_out = get_wire(match.group(5), wires)
             
-            if (match.group(5) == "NOT" or match.group(5) == None):
-                gate.inputs = [wire_two, wire_two]
+            if (match.group(3) == "NOT" or match.group(3) == None):
+                gate.inputs = [wire_two, wire_one]
             else:
                 gate.inputs =[wire_one, wire_two]
             gate.output = wire_out
-            wire_one.inputs.append(gate)
-            wire_two.inputs.append(gate)
-            gates.add(gate)
+            gates.append(gate)
     return gates, wires
         
 def execute_part_one(input):
+    gates, wires = input
+    counter = 0
     for gate in gates:
+        counter += 1
         gate.go()
+    return wires['a'].value
 
 def execute_part_two(input):
-    return None
+    gates, wires = input
+    for gate in gates:
+        gate.go()
+    a_val = wires['a'].value
+    for key in wires:
+        wire = wires[key]
+        wire.signal = False
+        wire.value = 0
+    wires['b'].value = a_val
+    wires['b'].signal = True
+    for gate in gates:
+        gate.go()
+    pdb.set_trace()
+    return wires['a'].value
 
 def get_expected_results_map():
-    return { 'test.txt' : (None, None)}
+    return { 'test.txt' : (None, None), 'mytest.txt' : (None, None), 'adventtest.txt' : (None, None)}
 
 def get_gate_of(bool_type):
     if bool_type == "NOT":
@@ -47,27 +61,44 @@ def get_gate_of(bool_type):
     elif bool_type == "LSHIFT":
         return Gate(lambda a,b: a<<b)
     else:
-        return Gate(lambda a, b: a)
+        return Gate(lambda a, b: a.value)
 
-def get_wire(key, map):
+def get_wire(key, map, gate=None):
     if not key: #if the key is None, return a simple wire
-        return Wire(signal=True)
+       return Wire("blank", signal=True)
     try: #if the wire is just a value, don't map it
         value = int(key)
-        return Wire(value, signal=True)
+        return Wire(key, value, True)
     except:
         if key in map: #return a wire that's already been constructed
+            if(gate):
+                map[key].inputs.append(gate)
             return map[key]
         else:
-            wire = Wire() #make a new wire and map it
+            wire = Wire(key) #make a new wire and map it
+            if(gate):
+                wire.inputs.append(gate)
             map[key] = wire
             return wire
         
 class Wire:
-    def __init__(self, value=0, inputs=[],signal=False):
+    def __init__(self, name, value=0,signal=False):
+        self.name = name
         self.value = value
-        self.inputs = inputs
+        self.inputs = []
         self.signal = signal
+    def __str__(self):
+        return self.name
+    def __and__(self, other):
+        return self.value & other.value
+    def __lshift__(self, other):
+        return self.value << other.value
+    def __rshift__(self, other):
+        return self.value >> other.value
+    def __or__(self, other):
+        return self.value | other.value
+    def __invert__(self):
+        return ~self.value
 
 class Gate:
     def __init__(self,logic):
@@ -80,12 +111,12 @@ class Gate:
         return self.inputs == other.inputs and self.output == other.output
     def __hash__(self):
         return hash(self.inputs[0]) + hash(self.inputs[0]) * hash(self.output)
-    
     def go(self):
         a, b = self.inputs
-        if(a.signal and b.signal):
-            self.output.value = (0xffff & logic(a,b))
-            slef.output.signal = True
+        if(a.signal and b.signal and not self.output.signal):
+            self.output.value = (self.logic(a,b) & 0xffff )
+            self.output.signal = True
+#            print(a.name + " and " + b.name + " result in: " + str(self.output.value))
             for gate in self.output.inputs:
                 gate.go()
 '''
