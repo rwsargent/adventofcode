@@ -1,19 +1,23 @@
-import re
+import re, pdb
 def read_input(filename):
-    wires = {}, gates = set()
+    wires = {}
+    gates = set()
     #((\w+ )?(AND|OR|LSHIFT|RSHIFT|NOT)?)(?(1)\s)(\w+) -> ([a-z]+) -- the real one
     regex = re.compile(r'((\w+ )?(AND|OR|LSHIFT|RSHIFT|NOT)?)(?(1)\s)(\w+) -> ([a-z]+)')
     with open(filename) as file:
         for line in file:
             match = regex.match(line)
-            gate = get_gate_of(match.group(5) )
-            wire_one = get_wire(match.group(4), wires)
-            wire_two = get_wire(match.group(6), wires)
-            wire_out = get_wire(match.group(7), wires)
+            if(not match):
+                print(line)
+                raise Exception()
+            gate = get_gate_of(match.group(3))
+            wire_one = get_wire(match.group(2), wires)
+            wire_two = get_wire(match.group(4), wires)
+            wire_out = get_wire(match.group(5), wires)
             
             if (match.group(5) == "NOT" or match.group(5) == None):
-                gate.inputs = [wire_two, Wire()]
-            else():
+                gate.inputs = [wire_two, wire_two]
+            else:
                 gate.inputs =[wire_one, wire_two]
             gate.output = wire_out
             wire_one.inputs.append(gate)
@@ -31,18 +35,18 @@ def execute_part_two(input):
 def get_expected_results_map():
     return { 'test.txt' : (None, None)}
 
-def get_gate_of(boolean, inputs, outputs):
-    if boolean == "NOT":
+def get_gate_of(bool_type):
+    if bool_type == "NOT":
         return Gate(lambda a,b: ~a)
-    elif boolean == "AND":
+    elif bool_type == "AND":
         return Gate(lambda a,b:a&b)
-    elif boolean == "OR":
+    elif bool_type == "OR":
         return Gate(lambda a,b:a|b)
-    elif boolean == "RSHIFT":
+    elif bool_type == "RSHIFT":
         return Gate(lambda a,b: a>>b)
-    elif boolean == "LSHIFT":
+    elif bool_type == "LSHIFT":
         return Gate(lambda a,b: a<<b)
-    else
+    else:
         return Gate(lambda a, b: a)
 
 def get_wire(key, map):
@@ -75,25 +79,20 @@ class Gate:
             return False
         return self.inputs == other.inputs and self.output == other.output
     def __hash__(self):
-        return hash(self.inputs) * hash(self.outputs)
+        return hash(self.inputs[0]) + hash(self.inputs[0]) * hash(self.output)
     
     def go(self):
         a, b = self.inputs
         if(a.signal and b.signal):
             self.output.value = (0xffff & logic(a,b))
             slef.output.signal = True
-            for(gate in self.output.inputs):
+            for gate in self.output.inputs:
                 gate.go()
-                
-    def get_input_values(self)
-        
 '''
 matches
-group 1: arguments
-group 2: number argument if only number
-group 3: arguments
-group 4: left arg
-group 5: gate logic
-group 6: r arg
-group 7: out gate
+group 1: lhs without last gate.
+group 2: left arg
+group 3: gate logic
+group 4: right arg
+group 5: output
 '''
