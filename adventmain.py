@@ -11,8 +11,9 @@ def run_tests(module, args):
             continue
         full_filename = "tests/" + name + "/" + filename
         file_input = module.read_input(full_filename)
-        part_one_test = module.execute_part_one(file_input) if args.skip != 1 else None
-        part_two_test = module.execute_part_two(file_input) if args.skip != 2 else None
+        goal = module.get_test_goal()
+        part_one_test = module.execute_part_one(file_input, goal) if args.skip != 1 else None
+        part_two_test = module.execute_part_two(file_input, goal) if args.skip != 2 else None
         try:
             expected_results = expected_results_map[filename]
             if(part_one_test != expected_results[0] and args.skip != 1):
@@ -51,11 +52,12 @@ def main():
         return
 
     problem_input = mod.read_input("input/" + mod.__name__ + "_input.txt")
+    goal = mod.get_problem_goal()
     if(args.skip != 1):
-        part_one_result = mod.execute_part_one(problem_input)
+        part_one_result = mod.execute_part_one(problem_input, goal)
         print("Part one: " + str(part_one_result))
     if(args.skip != 2):
-        part_two_result = mod.execute_part_two(problem_input)
+        part_two_result = mod.execute_part_two(problem_input, goal)
         print("Part two: " + str(part_two_result))
 
 class TestFailed(Exception):
