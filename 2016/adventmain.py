@@ -11,16 +11,20 @@ def run_tests(module, args):
             continue
         full_filename = "tests/" + name + "/" + filename
         file_input = module.read_input(full_filename)
-        part_one_test = module.execute_part_one(file_input) if args.skip != 1 else None
-        part_two_test = module.execute_part_two(file_input) if args.skip != 2 else None
         try:
             expected_results = expected_results_map[filename]
-            if(part_one_test != expected_results[0] and args.skip != 1):
-                    maybe_print_fail_test_message(filename, 1, part_one_test, expected_results[0])
-            if(part_two_test != expected_results[1] and args.skip != 2):
-                maybe_print_fail_test_message(filename, 2, part_two_test, expected_results[1])
+            if(expected_results == (None, None)):
+                continue #don't test if there are no expected results
         except KeyError:
             print("No expected value for " + filename)
+            continue
+
+        part_one_test = module.execute_part_one(file_input) if args.skip != 1 else None
+        part_two_test = module.execute_part_two(file_input) if args.skip != 2 else None
+        if(part_one_test != expected_results[0] and args.skip != 1):
+            maybe_print_fail_test_message(filename, 1, part_one_test, expected_results[0])
+        if(part_two_test != expected_results[1] and args.skip != 2):
+            maybe_print_fail_test_message(filename, 2, part_two_test, expected_results[1])
             
     print ("All tests pass")
     return True
