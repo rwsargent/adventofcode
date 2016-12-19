@@ -14,7 +14,7 @@ def execute_part_one(input):
         md5_hash = md5.hexdigest();
         if (md5_hash.startswith('00000')):
             password += md5_hash[5]
-            postfix += 1
+        postfix += 1
     return password
 
 def execute_part_two(input):
@@ -26,11 +26,12 @@ def execute_part_two(input):
         md5_hash = md5.hexdigest();
         if (md5_hash.startswith('00000')):
             pass_position = md5_hash[5]
-            if ord(pass_position) > ord('8'):
-                continue
-            if pass_position[pass_position] == " ":
-                password[pass_position] = md5_hash[6]
-            postfix += 1
+            if not (ord(pass_position) > ord('8')):
+              pass_idx = int(pass_position)  
+              if password[pass_idx] == " ":
+                password[pass_idx] = md5_hash[6]
+        print("\rCurrent password: [" + str("".join(password)) + "] trying hash " + str(md5_hash)),
+        postfix += 1
     return "".join(password)
 
 def get_expected_results_map():
