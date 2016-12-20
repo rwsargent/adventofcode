@@ -23,4 +23,3 @@ def execute_part_two(lines):
 
 def get_expected_results_map():
     return { 'test.txt' : (None, None)}
-
