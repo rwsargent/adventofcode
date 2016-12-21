@@ -4,30 +4,39 @@ import os
 import pdb
 import argparse
 def run_tests(module, args):
-    expected_results_map = module.get_expected_results_map()
-    name = module.__name__
-    for filename in os.listdir("tests/" + name):
-        if(filename.startswith(".")): #skip 'hidden' files
-            continue
-        full_filename = "tests/" + name + "/" + filename
-        file_input = module.read_input(full_filename)
+    allPass = True
+    for filename in os.listdir("tests/" + module.__name__):
+      if(filename.startswith(".")): #skip 'hidden' files
+        continue
+      if args.test and args.test != filename:
+        continue
+      else:
         try:
-            expected_results = expected_results_map[filename]
-            if(expected_results == (None, None)):
-                continue #don't test if there are no expected results
-        except KeyError:
-            print("No expected value for " + filename)
-            continue
-
-        part_one_test = module.execute_part_one(file_input) if args.skip != 1 else None
-        part_two_test = module.execute_part_two(file_input) if args.skip != 2 else None
-        if(part_one_test != expected_results[0] and args.skip != 1):
-            maybe_print_fail_test_message(filename, 1, part_one_test, expected_results[0])
-        if(part_two_test != expected_results[1] and args.skip != 2):
-            maybe_print_fail_test_message(filename, 2, part_two_test, expected_results[1])
+          run_test(module, args, filename)
+        except TestFailed as err:
+          print(err.get_message())
+          allPass = False
             
-    print ("All tests pass")
-    return True
+    return allPass
+
+def run_test(module, args, filename):
+  full_filename = "tests/" + module.__name__ + "/" + filename
+  file_input = module.read_input(full_filename)
+  try:
+    expected_results = module.get_expected_results_map()[filename]
+    if(expected_results == (None, None)):
+      return 
+  except KeyError:
+    print("No expected value for " + filename)
+    return
+  
+  part_one_test = module.execute_part_one(file_input) if args.skip != 1 or not expected_results[0] else None
+  part_two_test = module.execute_part_two(file_input) if args.skip != 2 or not expected_results[2] else None
+  
+  if(part_one_test != expected_results[0] and args.skip != 1):
+    maybe_print_fail_test_message(filename, 1, part_one_test, expected_results[0])
+  if(part_two_test != expected_results[1] and args.skip != 2):
+    maybe_print_fail_test_message(filename, 2, part_two_test, expected_results[1])
 
 def maybe_print_fail_test_message(filename, part, result, expected):
     if(expected): #my hack for having a test file for only part one or two.
@@ -39,6 +48,7 @@ def parse_args():
     parser.add_argument('module', metavar='mod', 
                         help='name of the module you wish to run')
     parser.add_argument('--skip', dest="skip", type=int, help='Skip the first puzzle')
+    parser.add_argument('--test', dest="test", type=str, help='Run a specific test')
 
     return parser.parse_args()
 def main():
@@ -48,12 +58,9 @@ def main():
     args = parse_args()
     name = args.module
     mod = __import__(name, fromlist=[''])
-    try:
-        run_tests(mod, args)
-    except TestFailed as err:
-        print(err.get_message())
-        return
-
+    if not run_tests(mod, args):
+      return
+    print "All Tests passed!"
     problem_input = mod.read_input("input/" + mod.__name__ + "_input.txt")
     if(args.skip != 1):
         part_one_result = mod.execute_part_one(problem_input)
