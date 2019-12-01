@@ -1,6 +1,0 @@
-3 -> y
-z AND 1 -> b
-y AND 4 -> c
-b OR c -> d
-d -> a
-3 -> z
