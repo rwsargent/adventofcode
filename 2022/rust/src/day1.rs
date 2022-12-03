@@ -1,3 +1,5 @@
+use std::fmt::Display;
+
 use crate::{puzzle::{Puzzle}, reader};
 
 pub struct DayOne {
@@ -17,18 +19,21 @@ impl DayOne {
     }
 }
 
-impl Puzzle<i32> for DayOne {
-    fn run_part_one(&self) -> Result<i32, String> {
-        let max = self.calories.iter().map(|elf| elf.iter().sum::<i32>()).max();
-        max.ok_or(String::from("No max found"))
+impl Puzzle<Box<dyn Display>> for DayOne {
+    fn run_part_one(&self) -> Result<Box<dyn Display>, String> {
+        let max = self.calories
+            .iter()
+            .map(|elf| elf.iter().sum::<i32>())
+            .max().unwrap();
+        Ok(Box::new(max))
     }
 
-    fn run_part_two(&self) -> Result<i32, String> {
+    fn run_part_two(&self) -> Result<Box<dyn Display>, String> {
        let mut calories = self.calories.iter()
         .map(|elf| elf.iter().sum::<i32>())
         .collect::<Vec<i32>>();
         calories.sort_by(|a, b| b.cmp(a));
-        Ok(calories.iter().take(3).sum())
+        Ok(Box::new(calories.iter().take(3).sum::<i32>()))
     }
 }
 
@@ -38,7 +43,7 @@ fn test_day_1() {
         calories: vec![vec![1000, 2000, 3000], vec![4000], vec![5000, 6000], vec![7000, 8000, 9000]]
     };
     let max = p.run_part_one().unwrap();
-    assert_eq!(max, 24000);
+    assert_eq!(*max.to_string(), 24000.to_string());
 }
 
 #[test]
@@ -47,5 +52,5 @@ fn test_day_2() {
         calories: vec![vec![1000, 2000, 3000], vec![4000], vec![5000, 6000], vec![7000, 8000, 9000], vec![10000]]
     };
     let top_three = p.run_part_two().unwrap();
-    assert_eq!(top_three, 45000)
+    assert_eq!(*top_three.to_string(), 45000.to_string())
 }

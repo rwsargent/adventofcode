@@ -1,16 +1,19 @@
 mod reader;
 mod day1;
 mod puzzle;
+mod day2;
 
-use std::{env, error::Error};
+use std::{env, error::Error, fmt::Display};
 
 use puzzle::Puzzle;
+use crate::reader::PuzzleInput;
 
 fn main() -> Result<(), Box<dyn Error>>{
     let day = env::args().skip(1).take(1).next().ok_or("No day argument")?;
     
-    let puzzle = match day.as_str() {
-        "1" => day1::DayOne::new(),
+    let puzzle: Box<dyn Puzzle<Box<dyn Display>>> = match day.as_str() {
+        "1" => Box::new(day1::DayOne::new()),
+        "2" => Box::new(day2::DayTwo::from_input(PuzzleInput::from_file("resources/day2.txt")?)),
         _ => panic!("Uknown day")
     };
 

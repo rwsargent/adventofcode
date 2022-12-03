@@ -23,9 +23,13 @@ impl PuzzleInput {
         self.input.clone()
     }
 
-    // pub fn as_string_list(&self) -> Vec<String> {
-    //     self.input.split("\n").map(|line| String::from(line)).collect()
+    // pub fn as_lines(&self) -> Lines {
+    //     self.input.lines()
     // }
+
+    pub fn as_string_vec(&self) -> Vec<String> {
+        self.input.lines().map(String::from).collect()
+    }
     
     // pub fn as_ints(&self) -> Vec<i32> {
     //     self.input.split("\n")
