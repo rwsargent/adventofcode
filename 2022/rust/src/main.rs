@@ -2,6 +2,7 @@ mod reader;
 mod day1;
 mod puzzle;
 mod day2;
+mod day3;
 
 use std::{env, error::Error, fmt::Display};
 

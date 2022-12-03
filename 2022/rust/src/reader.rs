@@ -13,6 +13,12 @@ impl PuzzleInput {
         })
     }
 
+    pub fn from_string(rawstring: &str) -> Self{
+        PuzzleInput{
+            input: String::from(rawstring)
+        }
+    }
+
     // pub fn from_string(input: String) -> Self {
     //     PuzzleInput {
     //         input
