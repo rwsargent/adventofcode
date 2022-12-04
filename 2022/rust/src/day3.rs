@@ -41,6 +41,7 @@ fn part_one(input: PuzzleInput) {
     println!{"part one: {}", sum};
 }
 
+#[allow(dead_code)]
 fn part_one_functional(input: PuzzleInput) {
     let lines = input.as_string_vec();
     let result = lines.iter().fold(0, |acc, line| {
@@ -78,6 +79,7 @@ fn to_set(line: &String) -> HashSet<i32> {
     })
 }
 
+#[allow(dead_code)]
 fn part_two(input: PuzzleInput) {
     let lines = input.as_string_vec();
     let mut i = 0;
