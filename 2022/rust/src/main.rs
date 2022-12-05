@@ -4,6 +4,7 @@ mod puzzle;
 mod day2;
 mod day3;
 mod day4;
+mod day5;
 
 use std::{env, error::Error, fmt::Display};
 

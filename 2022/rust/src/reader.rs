@@ -36,6 +36,10 @@ impl PuzzleInput {
     pub fn as_string_vec(&self) -> Vec<String> {
         self.input.lines().map(String::from).collect()
     }
+
+    pub fn as_strs(&self) -> Vec<&str> {
+        self.input.lines().collect()
+    }
     
     // pub fn as_ints(&self) -> Vec<i32> {
     //     self.input.split("\n")
