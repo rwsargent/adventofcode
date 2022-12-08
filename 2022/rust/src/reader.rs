@@ -1,4 +1,4 @@
-use std::{fs, error::Error};
+use std::{fs, error::Error, str::Lines};
 
 pub struct PuzzleInput {
     input: String
@@ -29,9 +29,9 @@ impl PuzzleInput {
         self.input.clone()
     }
 
-    // pub fn as_lines(&self) -> Lines {
-    //     self.input.lines()
-    // }
+    pub fn as_lines(&self) -> Lines {
+        self.input.lines()
+    }
 
     pub fn as_string_vec(&self) -> Vec<String> {
         self.input.lines().map(String::from).collect()
