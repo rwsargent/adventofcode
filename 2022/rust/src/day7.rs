@@ -1,14 +1,18 @@
-use std::{io::Cursor, collections::HashMap, str::Lines};
+use std::{collections::HashMap, str::Lines};
 
 use crate::reader::PuzzleInput;
 
 #[derive(Clone, PartialEq)]
+#[allow(dead_code)]
+
 enum FsType {
     Dir,
     File
 }
 
 #[derive(Clone)]
+#[allow(dead_code)]
+
 struct FsNode {
     size: u32,
     name: String,
@@ -16,7 +20,7 @@ struct FsNode {
     fs_type: FsType,
 }
 
-
+#[allow(dead_code)]
 fn parse<'a>(mut fs: HashMap<String, FsNode>, mut lines: Lines<'a>, parent: &str) -> (HashMap<String, FsNode>, Lines<'a>, u32) {
     let mut dir_size = 0;
     while let Some(line) = lines.next() {
