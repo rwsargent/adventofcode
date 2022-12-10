@@ -8,8 +8,9 @@ mod day5;
 mod day6;
 mod day7;
 mod day8;
-pub mod cursor;
 mod day9;
+mod day10;
+pub mod cursor;
 use std::{env, error::Error, fmt::Display};
 
 use puzzle::Puzzle;
