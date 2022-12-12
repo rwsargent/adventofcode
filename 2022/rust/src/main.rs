@@ -10,6 +10,7 @@ mod day7;
 mod day8;
 mod day9;
 mod day10;
+mod day11;
 pub mod cursor;
 use std::{env, error::Error, fmt::Display};
 
