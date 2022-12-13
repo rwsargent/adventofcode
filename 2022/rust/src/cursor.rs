@@ -13,6 +13,9 @@ impl Display for Cursor2D {
 }
 
 impl Cursor2D {
+    pub fn from_usize(x: usize, y:usize) -> Self{
+        Cursor2D { x: (x as i32), y: (y as i32) }
+    }
     pub fn up(self) -> Self{
         let mut clone = self.clone();
         clone.y -= 1;
@@ -60,5 +63,9 @@ impl Cursor2D {
     pub fn neighbors(&self) -> Vec<Self> {
         vec![self.clone().up(), self.clone().down(), self.clone().left(), self.clone().right(),
              self.clone().nor_e(), self.clone().se(), self.clone().sw(), self.clone().nw()]
+    }
+
+    pub fn cardinal_neighbors(&self) -> Vec<Self> {
+        vec![self.clone().up(), self.clone().down(), self.clone().right(), self.clone().left(),]
     }
 }

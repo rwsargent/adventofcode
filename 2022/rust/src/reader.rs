@@ -1,5 +1,7 @@
 use std::{fs, error::Error, str::Lines};
 
+use itertools::Itertools;
+
 pub struct PuzzleInput {
     input: String
 }
@@ -41,6 +43,17 @@ impl PuzzleInput {
         self.input.lines().collect()
     }
     
+    // pub fn as_byte_grid(&self) -> Vec<&[u8]> {
+    //     self.input.lines()
+    //         .map(|s| s.as_bytes())
+    //         .collect()
+    // }
+
+    pub fn as_string_grid(&self) -> Vec<Vec<String>> {
+        self.input.lines()
+            .map(|l| l.chars().map(String::from).collect_vec())
+            .collect()
+    }
     // pub fn as_ints(&self) -> Vec<i32> {
     //     self.input.split("\n")
     //         .filter_map(|line| line.trim().parse().ok())
