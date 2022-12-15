@@ -43,6 +43,9 @@ impl PuzzleInput {
         self.input.lines().collect()
     }
     
+    pub fn as_groups(&self) -> Vec<&str> {
+        self.input.split("\n\n").collect_vec()
+    }
     // pub fn as_byte_grid(&self) -> Vec<&[u8]> {
     //     self.input.lines()
     //         .map(|s| s.as_bytes())
