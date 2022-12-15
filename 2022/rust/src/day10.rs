@@ -17,7 +17,7 @@ fn from_instructions(instructions: Vec<&str>) -> Vec<Op> {
     }).flatten().collect()
 }
 
-fn part_one(input: PuzzleInput) -> i32 {
+pub fn part_one(input: PuzzleInput) -> i32 {
     let mut x = 1;
     from_instructions(input.as_strs())
         .iter().map(|op| {
@@ -66,7 +66,7 @@ fn cycle_x(input: Vec<&str>) -> Vec<(usize, i32)>{
         .collect()
 }
 
-fn part_two(input: PuzzleInput) {
+pub fn part_two(input: PuzzleInput) {
     let xs = cycle_x(input.as_strs());
     for row in 0..6 {
         for pixel in 0..40 {

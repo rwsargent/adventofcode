@@ -1,6 +1,6 @@
 use std::{collections::HashMap, str::Lines};
 
-use crate::reader::PuzzleInput;
+use rust::reader::PuzzleInput;
 
 #[derive(Clone, PartialEq)]
 #[allow(dead_code)]
@@ -62,10 +62,7 @@ fn parse<'a>(mut fs: HashMap<String, FsNode>, mut lines: Lines<'a>, parent: &str
     return (fs, lines, dir_size)
 }
 
-#[test]
-fn test_part_one() {
-    let input = PuzzleInput::from_file("resources/day7.txt").unwrap();
-
+pub fn part_one(input: PuzzleInput) {
     let (fs, _, _) = parse(HashMap::new(), input.as_lines(), "");
     // for (_, node) in fs {
     //     println!("{} ({})", node.name, node.size)
@@ -76,7 +73,12 @@ fn test_part_one() {
     }).map(|(_, p)| p.size)
     .sum();
     println!("Sum: {}", sum);
+}
+#[test]
+pub fn test_part_one() {
+    let input = PuzzleInput::from_file("resources/day7.txt").unwrap();
 
+    part_one(input);
 }
 
 #[test]

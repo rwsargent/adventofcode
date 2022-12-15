@@ -2,7 +2,7 @@ use std::collections::{VecDeque, HashMap};
 
 use itertools::Itertools;
 
-struct Monkey {
+pub struct Monkey {
     items: VecDeque<i64>,
     op: Box<dyn Fn(i64) -> i64>,
     test: i64,
@@ -12,7 +12,7 @@ struct Monkey {
 }
 
 
-fn part_one(mut monkies: Vec<Monkey>) {
+pub fn part_one(mut monkies: Vec<Monkey>) {
     let clamp:i64 = monkies.iter().map(|m| m.test).product();
     for _round in 0..10_000 {
         for monkey_idx in 0..monkies.len() {

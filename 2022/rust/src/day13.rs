@@ -1,14 +1,10 @@
-use std::{iter::Peekable, str::Chars, cmp::Ordering, fmt::Debug};
+use std::{cmp::Ordering, fmt::Debug};
 
-use crate::{reader::PuzzleInput, puzzle::Puzzle};
-use itertools::Itertools;
-use nom::{IResult, multi::separated_list0, bytes::complete::tag, character::{is_digit, complete::digit1}, combinator::{map, peek}, branch::alt, sequence::{tuple, preceded, delimited}, Parser};
-use scanner_rust::ScannerStr;
-use strum_macros::Display;
-
+use crate::{reader::PuzzleInput};
+use nom::{IResult, multi::separated_list0, bytes::complete::tag, branch::alt, sequence::{delimited}, Parser};
 
 #[derive(PartialEq, Eq, PartialOrd)]
-enum Packet {
+pub enum Packet {
     Value(i32),
     List(Vec<Packet>),
 }
@@ -33,7 +29,7 @@ impl Debug for Packet {
     }
 }
 
-fn parse_packet(input: &str) -> IResult<&str, Packet> {
+pub fn parse_packet(input: &str) -> IResult<&str, Packet> {
     alt((
         delimited(tag("["), separated_list0(tag(","), parse_packet), tag("]")).map(|v| Packet::List(v)),
         nom::character::complete::i32.map(|n| Packet::Value(n))
@@ -41,7 +37,7 @@ fn parse_packet(input: &str) -> IResult<&str, Packet> {
 }
 
 
-fn part_one(input: PuzzleInput) -> usize {
+pub fn part_one(input: PuzzleInput) -> usize {
     input.as_groups()
         .iter()
         .map(|g| g.split("\n").collect::<Vec<&str>>())
@@ -73,7 +69,7 @@ fn run_part_one() {
     dbg!(part_one(PuzzleInput::from_file("resources/day13.txt").unwrap()));
 }
 
-fn part_two(input: PuzzleInput) -> usize {
+pub fn part_two(input: PuzzleInput) -> usize {
     let two = Packet::List(vec!(Packet::List(vec!(Packet::Value(2)))));
     let six = Packet::List(vec!(Packet::List(vec!(Packet::Value(6)))));
 

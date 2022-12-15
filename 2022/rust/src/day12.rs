@@ -1,14 +1,14 @@
 use std::{collections::HashMap, fs::File};
 use std::io::Write;
 
-use crate::{reader::PuzzleInput, cursor::{self, Cursor2D}, puzzle::Puzzle};
+use crate::{reader::PuzzleInput, cursor::{Cursor2D}};
 
 use itertools::Itertools;
-use petgraph::{prelude::Graph, stable_graph::{EdgeIndex, NodeIndex}};
+use petgraph::{prelude::Graph, stable_graph::{NodeIndex}};
 use petgraph::algo::{dijkstra, astar};
 
 
-fn part_one(input: PuzzleInput) -> i32 {
+pub fn part_one(input: PuzzleInput) -> i32 {
     let (start, goal, elevation_map) = normalize_input(input);
 
     let mut g = Graph::<Cursor2D, ()>::new();
@@ -116,8 +116,8 @@ fn run_part_one() {
     dbg!(part_one(input));
 }
 
-fn part_two(input: PuzzleInput) -> i32 {
-    let (start, goal, elevation_map) = normalize_input(input);
+pub fn part_two(input: PuzzleInput) -> i32 {
+    let (_start, goal, elevation_map) = normalize_input(input);
 
     let mut g = Graph::<Cursor2D, ()>::new();
     let mut nodes = HashMap::new();

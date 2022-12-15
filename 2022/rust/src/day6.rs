@@ -1,8 +1,8 @@
 use std::collections::HashSet;
 
-use crate::reader::PuzzleInput;
+use rust::reader::PuzzleInput;
 
-fn part_one(signal: String) -> i32{
+pub fn part_one(signal: String) -> i32{
     let mut c = 4;
     for window in signal.as_bytes().windows(4) {
         if HashSet::<u8>::from_iter(window.iter().map(|el| *el)).len() == 4 {
@@ -11,6 +11,11 @@ fn part_one(signal: String) -> i32{
         c += 1;
     }
     0
+}
+
+pub fn wrap_part_one(input: PuzzleInput) {
+    let input = input.as_string();
+    dbg!{part_one(input)};
 }
 
 #[test]
@@ -27,7 +32,7 @@ fn run_part_one() {
     dbg!{part_one(input)};
 }
 
-fn part_two(signal: String) -> i32{
+pub fn part_two(signal: String) -> i32{
     let mut c = 14;
     for window in signal.as_bytes().windows(14) {
         if HashSet::<u8>::from_iter(window.iter().map(|el| *el)).len() == 14 {

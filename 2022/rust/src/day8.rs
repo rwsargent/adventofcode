@@ -136,7 +136,7 @@ fn calculate_score(trees: &Grid, r: isize, c: isize, dir: (isize, isize)) -> i32
     score
 }
 
-fn part_two(input: PuzzleInput) {
+pub fn part_two(input: PuzzleInput) {
     let trees = build_grid(input);
     let mut best_tree_score = -1;
     for r in 0isize..trees.len() as isize {
