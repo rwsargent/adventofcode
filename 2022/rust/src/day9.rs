@@ -1,7 +1,7 @@
 use std::{collections::{HashSet}, str::FromStr,};
 use strum_macros::{EnumString};
 
-use crate::{reader::PuzzleInput, cursor::Cursor2D};
+use crate::{reader::PuzzleInput, coord::Coord};
 #[derive(Debug, EnumString)]
 enum Command {
     #[strum(serialize = "U")]
@@ -15,9 +15,9 @@ enum Command {
 }
 
 pub fn part_one(input: PuzzleInput) -> usize {
-    let mut visited: HashSet<Cursor2D> = HashSet::new();
-    let mut head: Cursor2D = Default::default();
-    let mut tail: Cursor2D = Default::default();
+    let mut visited: HashSet<Coord> = HashSet::new();
+    let mut head: Coord = Default::default();
+    let mut tail: Coord = Default::default();
     visited.insert(tail.clone());
 
     for line in input.as_lines() {
@@ -68,8 +68,8 @@ fn run_part_one() {
 }
 
 pub fn part_two(input: PuzzleInput) -> usize {
-    let mut rope: Vec<Cursor2D> = (0..10).map(|_| Cursor2D{x:0, y:0}).collect();
-    let mut visited:HashSet<Cursor2D> = HashSet::new();
+    let mut rope: Vec<Coord> = (0..10).map(|_| Coord{x:0, y:0}).collect();
+    let mut visited:HashSet<Coord> = HashSet::new();
     visited.insert(rope.last().unwrap().clone());
 
     for line in input.as_lines() {

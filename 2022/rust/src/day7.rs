@@ -1,6 +1,6 @@
 use std::{collections::HashMap, str::Lines};
 
-use rust::reader::PuzzleInput;
+use crate::reader::PuzzleInput;
 
 #[derive(Clone, PartialEq)]
 #[allow(dead_code)]

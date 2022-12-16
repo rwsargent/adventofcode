@@ -1,7 +1,7 @@
 use std::{collections::HashMap, fs::File};
 use std::io::Write;
 
-use crate::{reader::PuzzleInput, cursor::{Cursor2D}};
+use crate::{reader::PuzzleInput, coord::{Coord}};
 
 use itertools::Itertools;
 use petgraph::{prelude::Graph, stable_graph::{NodeIndex}};
@@ -11,12 +11,12 @@ use petgraph::algo::{dijkstra, astar};
 pub fn part_one(input: PuzzleInput) -> i32 {
     let (start, goal, elevation_map) = normalize_input(input);
 
-    let mut g = Graph::<Cursor2D, ()>::new();
+    let mut g = Graph::<Coord, ()>::new();
     let mut nodes = HashMap::new();
     // Add nodes to graph
     for x in 0..elevation_map.len() {
         for y in  0..elevation_map[x].len() {
-            let c = Cursor2D::from_usize(x, y);
+            let c = Coord::from_usize(x, y);
             nodes.insert(c, g.add_node(c));
         }
     }
@@ -26,11 +26,11 @@ pub fn part_one(input: PuzzleInput) -> i32 {
     for x in 0..elevation_map.len() {
         for y in  0..elevation_map[x].len() {
             let elevation = &elevation_map[x][y];
-            let current = Cursor2D{x: x as i32, y: y as i32};
+            let current = Coord{x: x as i32, y: y as i32};
             if *elevation == String::from("a") {
                 starters.push(current.clone());
             }
-            let node = nodes.get(&Cursor2D::from_usize(x, y)).unwrap();
+            let node = nodes.get(&Coord::from_usize(x, y)).unwrap();
             let ns = current.cardinal_neighbors()
                 .iter()
                 .filter(|c| c.x >= 0 && c.x < elevation_map.len() as i32  && c.y >= 0 && c.y < elevation_map[0].len() as i32)
@@ -58,18 +58,18 @@ pub fn part_one(input: PuzzleInput) -> i32 {
     // }, |_| 1, |_| 0);
     let path = dijkstra(&g, *start_node, None, |_| 1);
 
-    let costs = path.iter().map(|(k, v)| (g[*k], v)).collect::<HashMap<Cursor2D, &u32>>();
+    let costs = path.iter().map(|(k, v)| (g[*k], v)).collect::<HashMap<Coord, &u32>>();
     
     let mut file = File::create("out.txt").unwrap();
     for x in 0i32..(elevation_map.len() as i32) {
         for y in 0i32..(elevation_map[0].len() as i32) {
-            if (Cursor2D{x, y}) == start {
+            if (Coord{x, y}) == start {
                 write!(file, "(S:  0)").unwrap();
-            } else if (Cursor2D{x: i32::try_from(x).unwrap(), y: i32::try_from(y).unwrap()}) == goal {
-                let cost = costs.get(&Cursor2D { x, y}).unwrap_or(&&0u32);
+            } else if (Coord{x: i32::try_from(x).unwrap(), y: i32::try_from(y).unwrap()}) == goal {
+                let cost = costs.get(&Coord { x, y}).unwrap_or(&&0u32);
                 write!(file, "(E:{:3})", **cost).unwrap();
             } else { 
-                let cost = costs.get(&Cursor2D { x, y}).unwrap_or(&&0u32);
+                let cost = costs.get(&Coord { x, y}).unwrap_or(&&0u32);
                 write!(file, "({}:{:3})", elevation_map[x as usize][y as usize], **cost).unwrap(); 
             }
         }
@@ -82,16 +82,16 @@ pub fn part_one(input: PuzzleInput) -> i32 {
     0
 }
 
-fn normalize_input(input: PuzzleInput) -> (Cursor2D, Cursor2D, Vec<Vec<String>>) {
+fn normalize_input(input: PuzzleInput) -> (Coord, Coord, Vec<Vec<String>>) {
     let (mut start, mut goal) = (None, None);
     let mut grid = input.as_string_grid();
     for x in 0..grid.len() {
         for y in 0..grid[x].len() {
             if grid[x][y] == "S" {
-                start = Some(Cursor2D::from_usize(x, y));
+                start = Some(Coord::from_usize(x, y));
                 grid[x][y] = String::from("a");
             } else if grid[x][y] == "E" {
-                goal = Some(Cursor2D::from_usize(x, y));
+                goal = Some(Coord::from_usize(x, y));
                 grid[x][y] = String::from("z");
             }
         }
@@ -119,12 +119,12 @@ fn run_part_one() {
 pub fn part_two(input: PuzzleInput) -> i32 {
     let (_start, goal, elevation_map) = normalize_input(input);
 
-    let mut g = Graph::<Cursor2D, ()>::new();
+    let mut g = Graph::<Coord, ()>::new();
     let mut nodes = HashMap::new();
     // Add nodes to graph
     for x in 0..elevation_map.len() {
         for y in  0..elevation_map[x].len() {
-            let c = Cursor2D::from_usize(x, y);
+            let c = Coord::from_usize(x, y);
             nodes.insert(c, g.add_node(c));
         }
     }
@@ -134,11 +134,11 @@ pub fn part_two(input: PuzzleInput) -> i32 {
     for x in 0..elevation_map.len() {
         for y in  0..elevation_map[x].len() {
             let elevation = &elevation_map[x][y];
-            let current = Cursor2D{x: x as i32, y: y as i32};
+            let current = Coord{x: x as i32, y: y as i32};
             if *elevation == String::from("a") {
                 starters.push(current.clone());
             }
-            let node = nodes.get(&Cursor2D::from_usize(x, y)).unwrap();
+            let node = nodes.get(&Coord::from_usize(x, y)).unwrap();
             let ns = current.cardinal_neighbors()
                 .iter()
                 .filter(|c| c.x >= 0 && c.x < elevation_map.len() as i32  && c.y >= 0 && c.y < elevation_map[0].len() as i32)

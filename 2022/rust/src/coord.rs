@@ -1,20 +1,20 @@
 use std::fmt::{Display, self};
 
 #[derive(Debug, Default, PartialEq, Eq, Clone,Copy, Hash)]
-pub struct Cursor2D {
+pub struct Coord {
     pub x: i32, 
     pub y: i32,
 }
 
-impl Display for Cursor2D {
+impl Display for Coord {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "({}, {})", self.x, self.y)
     }
 }
 
-impl Cursor2D {
+impl Coord {
     pub fn from_usize(x: usize, y:usize) -> Self{
-        Cursor2D { x: (x as i32), y: (y as i32) }
+        Coord { x: (x as i32), y: (y as i32) }
     }
     pub fn up(self) -> Self{
         let mut clone = self.clone();
@@ -56,7 +56,7 @@ impl Cursor2D {
         self.up().left()
     }
 
-    pub fn dist(&self, other: &Cursor2D) -> f64 {
+    pub fn dist(&self, other: &Coord) -> f64 {
         (((self.x - other.x).pow(2) + (self.y - other.y).pow(2)) as f64).sqrt()
     }
 

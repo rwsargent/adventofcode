@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-use rust::reader::PuzzleInput;
+use crate::reader::PuzzleInput;
 
 pub fn part_one(signal: String) -> i32{
     let mut c = 4;
