@@ -84,6 +84,23 @@ impl Coord {
         }
         out
     }
+
+    pub fn manhattan(&self, other: &Coord) -> u32 {
+        self.x.abs_diff(other.x) + self.y.abs_diff(other.y)
+    }
+
+    pub fn in_direction(&self, direction: &Direction) -> Coord {
+        match direction {
+            Direction::N => self.down(),
+            Direction::E => self.right(),
+            Direction::S => self.up(),
+            Direction::W => self.left(),
+            Direction::NE => self.nor_e(),
+            Direction::SE => self.se(),
+            Direction::SW => self.sw(),
+            Direction::NW => self.nw(),
+        }
+    }
 }
 
 impl Sub for Coord {
@@ -100,4 +117,8 @@ impl Add for Coord {
     fn add(self, rhs: Self) -> Self::Output {
         Coord{x: self.x + rhs.x, y: self.y + rhs.y}
     }
+}
+
+pub enum Direction {
+    N, E, S, W, NE, SE, SW, NW
 }
