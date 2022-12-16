@@ -1,4 +1,4 @@
-use std::fmt::{Display, self};
+use std::{fmt::{Display, self}, ops::{Sub, Add}};
 
 #[derive(Debug, Default, PartialEq, Eq, Clone,Copy, Hash)]
 pub struct Coord {
@@ -67,5 +67,37 @@ impl Coord {
 
     pub fn cardinal_neighbors(&self) -> Vec<Self> {
         vec![self.clone().up(), self.clone().down(), self.clone().right(), self.clone().left(),]
+    }
+
+    pub fn unitize(&self) -> Self{
+        Coord {x: self.x.max(-1).min(1),
+        y : self.y.max(-1).min(1)}
+    }
+
+    pub fn all_between(&self, other: &Coord) -> Vec<Coord> {
+        let vec = (*other - *self).unitize();
+        let mut out = Vec::new();
+        let mut cursor = *self;
+        while cursor != *other {
+            out.push(cursor);
+            cursor = cursor + vec;
+        }
+        out
+    }
+}
+
+impl Sub for Coord {
+    type Output = Coord;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Coord{x: self.x - rhs.x, y: self.y - rhs.y}
+    }
+}
+
+impl Add for Coord {
+    type Output = Coord;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Coord{x: self.x + rhs.x, y: self.y + rhs.y}
     }
 }
