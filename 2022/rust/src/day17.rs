@@ -285,8 +285,8 @@ pub fn part_two(input: PuzzleInput) {
 
         match saved_states.iter().find_position(|s| **s == state) {
             Some((position, _state)) => {
-                let cycle_length = rock - position;
-                let repeat_count = 1_000_000_000_000u64 / cycle_length as u64;
+                // let cycle_length = rock - position;
+                // let repeat_count = 1_000_000_000_000u64 / cycle_length as u64;
                 println!("Cycle found at {}", position);
                 return;
             },

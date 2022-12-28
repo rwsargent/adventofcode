@@ -14,4 +14,4 @@ petgraph = "0.6.2"
 scanner-rust = "2.0.16"
 nom = "7"
 num-integer = "0.1"
-
+fraction = "0.12.2"
