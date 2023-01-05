@@ -37,5 +37,8 @@ fn main() -> Result<(), Box<dyn Error>>{
     println!{"{}", puzzle.run_part_one()?}
     println!{"{}", puzzle.run_part_two()?} 
 
+    let result = day16::part_two(PuzzleInput::from_file("resources/day16.txt").unwrap());
+    println!("Answer: {}", result);
+
     Ok(())
 }
