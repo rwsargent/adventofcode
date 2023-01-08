@@ -1,10 +1,6 @@
-use std::collections::{HashMap};
-use std::hash::Hasher;
+use std::collections::{HashSet};
 
-use itertools::Itertools;
 use nom::IResult;
-use core::hash::Hash;
-
 
 use crate::reader::PuzzleInput;
 
@@ -12,75 +8,21 @@ use nom::bytes::complete::tag;
 use nom::combinator::map;
 use nom::multi::separated_list1;
 
-#[derive(Debug, PartialEq, PartialOrd)]
-struct Triple {
-    x: f64,
-    y: f64,
-    z: f64,
-}
-
-impl Hash for Triple {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        (self.x as u64).hash(state);
-        (self.y as u64).hash(state);
-        (self.z as u64).hash(state);
-    }
-}
-
-impl Eq for Triple {}
-
-impl From<(f64, f64, f64)> for Triple {
-    fn from(t: (f64, f64, f64)) -> Self {
-        Triple {
-            x: t.0,
-            y: t.1,
-            z: t.2,
-        }
-    }
-}
-
-fn parse_line(input: &str) -> IResult<&str, (f64, f64, f64)> {
-    map(separated_list1(tag(","), nom::character::complete::i32), |v| (v[0] as f64, v[1] as f64, v[2] as f64))(input)
-}
-
 fn parse_line_i64(input: &str) -> IResult<&str, (i64, i64, i64)> {
     map(separated_list1(tag(","), nom::character::complete::i64), |v| (v[0], v[1], v[2]))(input)
 }
 
-fn faces(voxel: (f64, f64, f64)) -> Vec<Triple> {
-    let units = vec!(Triple::from((0.0, 0.0, 0.5)),
-    Triple::from((0.0, 0.0, -0.5)),
-    Triple::from((0.5, 0.0, 0.0)),
-    Triple::from((-0.5, 0.0, 0.0)),
-    Triple::from((0.0, 0.5, 0.0)),
-    Triple::from((0.0, -0.5, 0.0)));
-
-    units.iter()
-        .map(|dir| ((voxel.0 + dir.x), (voxel.1 + dir.y), (voxel.2 + dir.z)))
-        .map(Triple::from)
-        .collect_vec()
-}
+type Triple = (i64, i64, i64);
 
 pub fn part_one(input: PuzzleInput) -> usize {
-    input.as_lines()
-        .map(parse_line)
-        .map(|r| r.unwrap().1)
-        .flat_map(faces)
-        .fold(HashMap::new(), |mut acc, face| {
-            *acc.entry(face).or_insert(0) += 1;
-            acc
-        })
-        .iter()
-        .filter(|(_face, count)| **count == 1)
-        .count()
-}
-
-pub fn part_one_tuple(input: PuzzleInput) -> usize {
-    input.as_lines()
+    let cubes = input.as_lines()
         .map(parse_line_i64)
         .map(|r| r.unwrap().1)
-        .map(|(x, y, z)| (x*2, y*2, z*2))
-        .flat_map(|(x, y, z)| {
+        .collect::<HashSet<_>>();
+
+        cubes.iter()
+        .flat_map(|trip| {
+            let (x, y, z) = *trip;
             [
                 (x + 1, y, z),
                 (x - 1, y, z),
@@ -90,12 +32,7 @@ pub fn part_one_tuple(input: PuzzleInput) -> usize {
                 (x, y, z - 1),
             ]
         })
-        .fold(HashMap::new(), |mut acc, face| {
-            *acc.entry(face).or_insert(0) += 1;
-            acc
-        })
-        .iter()
-        .filter(|(_, count)| **count == 1)
+        .filter(|trip| !(&cubes).contains(trip))
         .count()
 }
 
@@ -114,8 +51,70 @@ fn run_part_one() {
     dbg!(part_one(PuzzleInput::from_file("resources/day18.txt").unwrap()));
 }
 
-#[test]
-fn run_part_one_tup() {
-    dbg!(part_one_tuple(PuzzleInput::from_file("resources/day18.txt").unwrap()));
+pub fn part_two(input: PuzzleInput) -> usize {
+    let cubes = input.as_lines()
+        .map(parse_line_i64)
+        .map(|r| r.unwrap().1)
+        .collect::<HashSet<_>>();
 
+    let (min, max) = cubes.iter()
+        .fold(((i64::MAX, i64::MAX, i64::MAX), (i64::MIN, i64::MIN, i64::MIN)), 
+            |(mut min, mut max), cube| {
+                min.0 = min.0.min(cube.0);
+                min.1 = min.1.min(cube.1);
+                min.2 = min.2.min(cube.2);
+
+                max.0 = max.0.max(cube.0);
+                max.1 = max.1.max(cube.1);
+                max.2 = max.2.max(cube.2);
+
+                (min, max)
+            });
+    dbg!(&min, &max);
+    cubes.iter()
+        .flat_map(|trip| {
+            let (x, y, z) = *trip;
+            [
+                (x + 1, y, z),
+                (x - 1, y, z),
+                (x, y + 1, z),
+                (x, y - 1, z),
+                (x, y, z + 1),
+                (x, y, z - 1),
+            ]
+        })
+        .filter(|trip| !(&cubes).contains(trip) && can_reach_outside(trip, &cubes,&min, &max, &mut HashSet::new()))
+        .count()
+}
+
+fn can_reach_outside(trip: &Triple, cubes: &HashSet<Triple>, min: &Triple, max: &Triple, visited: &mut HashSet<Triple>) -> bool {
+    if trip.0 < min.0 || trip.0 > max.0 ||
+        trip.1 < min.1 || trip.0 > max.0 ||
+        trip.2 < min.2 || trip.0 > max.0 {
+        return true;
+    }
+    if cubes.contains(trip) || visited.contains(trip){
+        return false;
+    }
+    visited.insert(*trip);
+
+    [
+        (trip.0 + 1, trip.1, trip.2),
+        (trip.0 - 1, trip.1, trip.2),
+        (trip.0, trip.1 + 1, trip.2),
+        (trip.0, trip.1 - 1, trip.2),
+        (trip.0, trip.1, trip.2 + 1),
+        (trip.0, trip.1, trip.2 - 1),
+    ].iter().any(|edge| can_reach_outside(edge, cubes, min, max, visited))
+}
+
+
+#[test]
+fn test_part_two() {
+    dbg!(part_two(PuzzleInput::from_file("resources/day18-test.txt").unwrap()));
+}
+
+#[test]
+fn run_part_two() {
+    dbg!(part_two(PuzzleInput::from_file("resources/day18.txt").unwrap()));
 }
